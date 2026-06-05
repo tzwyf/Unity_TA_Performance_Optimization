@@ -9,8 +9,6 @@ namespace TA_Runtime.UI
 {
     public class UICtrl : MonoBehaviour
     {
-        private GameObject goOffice;
-        private GameObject goCeiling;
         private GameObject goLight;
         private Button btnLightSwitch;
         private TextMeshProUGUI fpsText;
@@ -23,26 +21,29 @@ namespace TA_Runtime.UI
         private const float WARNING_MS = 33.3f;   // < 30 FPS
         private const float CRITICAL_MS = 50.0f;  // < 20 FPS
 
-        private void Start()
+        private void Awake()
         {
             goLight = GameObject.Find("LightRoot");
             btnLightSwitch = GameObject.Find("BtnLightSwitch").GetComponent<Button>();
+            fpsText = GameObject.Find("TextFPS").GetComponent<TextMeshProUGUI>();
+        }
+
+        private void Start()
+        {
             btnLightSwitch.onClick.AddListener(ShowLight);
         }
 
         private void Update()
         {
-            // 制造CPU压力
-            goOffice = GameObject.Find("Office");
-            goCeiling = GameObject.Find("Ceiling");
-
             // 1. 平滑帧耗时（指数移动平均，用于观察整体趋势）
             deltaTime += (Time.unscaledDeltaTime - deltaTime) * 0.1f;
 
             // 2. 按间隔刷新 UI，降低 TextMeshPro 每帧重建的开销
-            // 制造CPU压力
-            fpsText = GameObject.Find("TextFPS").GetComponent<TextMeshProUGUI>();
-            UpdateFPS();
+            if (Time.unscaledTime >= nextUpdate)
+            {
+                nextUpdate = Time.unscaledTime + updateInterval;
+                UpdateFPS();
+            }
         }
 
         private void ShowLight()

@@ -1,10 +1,11 @@
 using System.IO;
+using TA_Runtime;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-namespace TA.VFX
+namespace TA_Editor
 {
     public class VFXGenerator : EditorWindow
     {
@@ -351,7 +352,7 @@ namespace TA.VFX
 
             importer.textureType = TextureImporterType.Default;
             importer.alphaIsTransparency = true;
-            importer.mipmapEnabled = true;
+            importer.mipmapEnabled = false;
             importer.wrapMode = TextureWrapMode.Clamp;
             importer.filterMode = FilterMode.Bilinear;
             importer.textureCompression = TextureImporterCompression.CompressedHQ;
@@ -382,6 +383,11 @@ namespace TA.VFX
             material.SetInt("_Cull", (int)UnityEngine.Rendering.CullMode.Off);
             material.EnableKeyword("_SURFACE_TYPE_TRANSPARENT");
             material.DisableKeyword("_ALPHAPREMULTIPLY_ON");
+            material.DisableKeyword("_SOFTPARTICLES_ON");
+            if (material.HasProperty("_SoftParticlesEnabled"))
+            {
+                material.SetFloat("_SoftParticlesEnabled", 0f);
+            }
             material.renderQueue = 3000;
 
             if (material.HasProperty("_BaseMap"))
@@ -457,6 +463,10 @@ namespace TA.VFX
             ParticleSystem localFog = CreateParticleSystem(root.transform, "Local_Soft_Light_Fog", hazeMaterial);
             ConfigureLocalSoftFog(localFog);
 
+            OfficeLightFogLOD lod = root.AddComponent<OfficeLightFogLOD>();
+            lod.cullDistance = 15f;
+            lod.reduceDistance = 8f;
+
             SavePrefab(root, $"{PrefabDir}/VFX_OfficeLightFog.prefab");
         }
 
@@ -473,6 +483,7 @@ namespace TA.VFX
             renderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
             renderer.receiveShadows = false;
             renderer.sortMode = ParticleSystemSortMode.Distance;
+            renderer.enableGPUInstancing = true;
 
             return ps;
         }
@@ -989,25 +1000,25 @@ namespace TA.VFX
             main.duration = 10f;
             main.loop = true;
             main.prewarm = true;
-            main.startLifetime = new ParticleSystem.MinMaxCurve(5.5f, 10f);
+            main.startLifetime = new ParticleSystem.MinMaxCurve(4f, 7f);
             main.startSpeed = new ParticleSystem.MinMaxCurve(0.01f, 0.035f);
-            main.startSize = new ParticleSystem.MinMaxCurve(1.6f, 3.4f);
+            main.startSize = new ParticleSystem.MinMaxCurve(1.0f, 2.2f);
             main.startRotation = new ParticleSystem.MinMaxCurve(-0.08f, 0.08f);
             main.startColor = new Color(0.72f, 0.78f, 0.84f, 0.22f);
             main.gravityModifier = 0f;
-            main.maxParticles = 140;
+            main.maxParticles = 90;
             main.simulationSpace = ParticleSystemSimulationSpace.Local;
             main.scalingMode = ParticleSystemScalingMode.Local;
 
             var emission = ps.emission;
             emission.enabled = true;
-            emission.rateOverTime = 11f;
+            emission.rateOverTime = 7f;
 
             var shape = ps.shape;
             shape.enabled = true;
             shape.shapeType = ParticleSystemShapeType.Box;
             shape.scale = new Vector3(2.2f, 3.2f, 2.2f);
-            shape.randomPositionAmount = 0.25f;
+            shape.randomPositionAmount = 0.35f;
 
             var velocity = ps.velocityOverLifetime;
             velocity.enabled = true;
@@ -1018,11 +1029,11 @@ namespace TA.VFX
 
             var noise = ps.noise;
             noise.enabled = true;
-            noise.quality = ParticleSystemNoiseQuality.Medium;
+            noise.quality = ParticleSystemNoiseQuality.Low;
             noise.strength = 0.11f;
             noise.frequency = 0.22f;
             noise.scrollSpeed = 0.035f;
-            noise.octaveCount = 2;
+            noise.octaveCount = 1;
 
             var size = ps.sizeOverLifetime;
             size.enabled = true;
@@ -1102,26 +1113,26 @@ namespace TA.VFX
             main.duration = 10f;
             main.loop = true;
             main.prewarm = true;
-            main.startLifetime = new ParticleSystem.MinMaxCurve(5f, 10f);
+            main.startLifetime = new ParticleSystem.MinMaxCurve(3f, 6f);
             main.startSpeed = new ParticleSystem.MinMaxCurve(0.012f, 0.08f);
-            main.startSize = new ParticleSystem.MinMaxCurve(0.045f, 0.22f);
+            main.startSize = new ParticleSystem.MinMaxCurve(0.035f, 0.16f);
             main.startRotation = new ParticleSystem.MinMaxCurve(0f, Mathf.PI * 2f);
-            main.startColor = new Color(0.82f, 0.86f, 0.88f, 0.58f);
+            main.startColor = new Color(0.82f, 0.86f, 0.88f, 0.40f);
             main.gravityModifier = 0f;
-            main.maxParticles = 680;
+            main.maxParticles = 300;
             main.simulationSpace = ParticleSystemSimulationSpace.Local;
             main.scalingMode = ParticleSystemScalingMode.Local;
 
             var emission = ps.emission;
             emission.enabled = true;
-            emission.rateOverTime = 62f;
+            emission.rateOverTime = 28f;
 
             var shape = ps.shape;
             shape.enabled = true;
             shape.shapeType = ParticleSystemShapeType.Box;
             shape.scale = new Vector3(3.2f, 4.2f, 3.2f);
             shape.position = new Vector3(0f, 0f, 0f);
-            shape.randomPositionAmount = 0.4f;
+            shape.randomPositionAmount = 0.55f;
 
             var velocity = ps.velocityOverLifetime;
             velocity.enabled = true;
@@ -1132,11 +1143,11 @@ namespace TA.VFX
 
             var noise = ps.noise;
             noise.enabled = true;
-            noise.quality = ParticleSystemNoiseQuality.Medium;
-            noise.strength = 0.28f;
+            noise.quality = ParticleSystemNoiseQuality.Low;
+            noise.strength = 0.20f;
             noise.frequency = 0.38f;
             noise.scrollSpeed = 0.09f;
-            noise.octaveCount = 2;
+            noise.octaveCount = 1;
 
             var size = ps.sizeOverLifetime;
             size.enabled = true;
@@ -1211,19 +1222,19 @@ namespace TA.VFX
             main.duration = 12f;
             main.loop = true;
             main.prewarm = true;
-            main.startLifetime = new ParticleSystem.MinMaxCurve(6f, 12f);
+            main.startLifetime = new ParticleSystem.MinMaxCurve(4.5f, 8f);
             main.startSpeed = new ParticleSystem.MinMaxCurve(0.006f, 0.025f);
-            main.startSize = new ParticleSystem.MinMaxCurve(0.65f, 1.45f);
+            main.startSize = new ParticleSystem.MinMaxCurve(0.4f, 0.9f);
             main.startRotation = new ParticleSystem.MinMaxCurve(0f, Mathf.PI * 2f);
             main.startColor = new Color(0.58f, 0.64f, 0.7f, 0.14f);
             main.gravityModifier = 0f;
-            main.maxParticles = 100;
+            main.maxParticles = 70;
             main.simulationSpace = ParticleSystemSimulationSpace.Local;
             main.scalingMode = ParticleSystemScalingMode.Local;
 
             var emission = ps.emission;
             emission.enabled = true;
-            emission.rateOverTime = 8f;
+            emission.rateOverTime = 5f;
 
             var shape = ps.shape;
             shape.enabled = true;

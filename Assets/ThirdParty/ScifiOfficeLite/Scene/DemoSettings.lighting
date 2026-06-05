@@ -10,7 +10,7 @@ LightingSettings:
   serializedVersion: 6
   m_GIWorkflowMode: 1
   m_EnableBakedLightmaps: 1
-  m_EnableRealtimeLightmaps: 1
+  m_EnableRealtimeLightmaps: 0
   m_RealtimeEnvironmentLighting: 0
   m_BounceScale: 1
   m_AlbedoBoost: 1
@@ -19,7 +19,7 @@ LightingSettings:
   m_BakeBackend: 2
   m_LightmapMaxSize: 1024
   m_BakeResolution: 40
-  m_Padding: 2
+  m_Padding: 4
   m_LightmapCompression: 2
   m_AO: 1
   m_AOMaxDistance: 1
@@ -41,11 +41,11 @@ LightingSettings:
   m_PVRCulling: 1
   m_PVRSampling: 1
   m_PVRDirectSampleCount: 32
-  m_PVRSampleCount: 256
+  m_PVRSampleCount: 512
   m_PVREnvironmentSampleCount: 256
   m_PVREnvironmentReferencePointCount: 2048
   m_LightProbeSampleCountMultiplier: 4
-  m_PVRBounces: 1
+  m_PVRBounces: 3
   m_PVRMinBounces: 1
   m_PVREnvironmentImportanceSampling: 1
   m_PVRFilteringMode: 1

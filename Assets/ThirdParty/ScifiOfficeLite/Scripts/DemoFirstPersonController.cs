@@ -151,7 +151,7 @@ namespace ScifiOffice {
 
         void Crouch() {
             //Crouch when the couch key is being pressed
-            if (Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.LeftShift)) {
+            if (Input.GetKey(KeyCode.LeftControl)) {
                 col.height = .5f;
                 isCrouching = true; 
             } else {
